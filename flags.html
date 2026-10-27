@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Прапори та столиці</title>
+<style>
+:root{--bg:#f4f5f9;--surf:#fff;--tx:#1b1d2a;--mut:#6b7086;--ac:#3b5bdb;--ok:#2f9e44;--bad:#e03131;--bd:#dfe2ec;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14151c;--surf:#20222d;--tx:#eceef7;--mut:#9a9fb5;--ac:#7c93ff;--ok:#51cf66;--bad:#ff6b6b;--bd:#323547;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14151c;--surf:#20222d;--tx:#eceef7;--mut:#9a9fb5;--ac:#7c93ff;--ok:#51cf66;--bad:#ff6b6b;--bd:#323547;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+main{max-width:480px;margin:0 auto;padding:16px}
+h1{font-size:1.3rem;margin:4px 0 12px;text-align:center}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:10px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);border-radius:12px;font-size:1rem;cursor:pointer}
+.tabs button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.stat{display:flex;justify-content:space-between;color:var(--mut);font-size:.9rem;margin-bottom:8px}
+.bar{height:6px;background:var(--bd);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.scene{perspective:1000px;height:280px;cursor:pointer}
+.card{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.card.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surf);border:1px solid var(--bd);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.back{transform:rotateY(180deg)}
+.flag{font-size:7rem;line-height:1.1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.big{font-size:2rem;font-weight:700}
+.sm{color:var(--mut);margin-top:8px}
+.tap{position:absolute;bottom:10px;font-size:.75rem;color:var(--mut)}
+.row{display:flex;gap:8px;margin-top:14px}
+.row button,.hint{padding:12px;border-radius:12px;border:1px solid var(--bd);background:var(--surf);color:var(--tx);font-size:1rem;cursor:pointer}
+.row button{flex:1}
+.row .yes{background:var(--ok);color:#fff;border-color:var(--ok)}
+.row .no{background:var(--bad);color:#fff;border-color:var(--bad)}
+.hint{width:100%;margin-top:10px;color:var(--ac);font-weight:600}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.opts button{padding:14px 8px;border-radius:12px;border:2px solid var(--bd);background:var(--surf);color:var(--tx);font-size:1rem;cursor:pointer}
+.opts button.ok{border-color:var(--ok);background:var(--ok);color:#fff}
+.opts button.bad{border-color:var(--bad);background:var(--bad);color:#fff}
+.end{text-align:center;padding:40px 10px}
+.end button{margin-top:16px;padding:12px 24px;border:0;border-radius:12px;background:var(--ac);color:#fff;font-size:1rem;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+<h1>🌍 Прапори та столиці</h1>
+<div class="tabs"><button id="m0" class="on">🚩 Прапори</button><button id="m1">🏛️ Столиці</button></div>
+<div id="app"></div>
+</main>
+<script>
+const RAW=`UA|Україна|Київ
+PL|Польща|Варшава
+DE|Німеччина|Берлін
+FR|Франція|Париж
+IT|Італія|Рим
+ES|Іспанія|Мадрид
+PT|Португалія|Лісабон
+GB|Велика Британія|Лондон
+IE|Ірландія|Дублін
+NL|Нідерланди|Амстердам
+BE|Бельгія|Брюссель
+CH|Швейцарія|Берн
+AT|Австрія|Відень
+CZ|Чехія|Прага
+SK|Словаччина|Братислава
+HU|Угорщина|Будапешт
+RO|Румунія|Бухарест
+BG|Болгарія|Софія
+GR|Греція|Афіни
+SE|Швеція|Стокгольм
+NO|Норвегія|Осло
+FI|Фінляндія|Гельсінкі
+DK|Данія|Копенгаген
+IS|Ісландія|Рейк’явік
+LT|Литва|Вільнюс
+LV|Латвія|Рига
+EE|Естонія|Таллінн
+MD|Молдова|Кишинів
+RS|Сербія|Белград
+HR|Хорватія|Загреб
+SI|Словенія|Любляна
+BA|Боснія і Герцеговина|Сараєво
+AL|Албанія|Тирана
+MK|Північна Македонія|Скоп’є
+ME|Чорногорія|Подгориця
+GE|Грузія|Тбілісі
+AM|Вірменія|Єреван
+AZ|Азербайджан|Баку
+TR|Туреччина|Анкара
+BY|Білорусь|Мінськ
+JP|Японія|Токіо
+CN|Китай|Пекін
+KR|Південна Корея|Сеул
+IN|Індія|Нью-Делі
+TH|Таїланд|Бангкок
+VN|В’єтнам|Ханой
+ID|Індонезія|Джакарта
+PH|Філіппіни|Маніла
+KZ|Казахстан|Астана
+IL|Ізраїль|Єрусалим
+SA|Саудівська Аравія|Ер-Ріяд
+AE|ОАЕ|Абу-Дабі
+IR|Іран|Тегеран
+PK|Пакистан|Ісламабад
+US|США|Вашингтон
+CA|Канада|Оттава
+MX|Мексика|Мехіко
+BR|Бразилія|Бразиліа
+AR|Аргентина|Буенос-Айрес
+CL|Чилі|Сантьяго
+CO|Колумбія|Богота
+PE|Перу|Ліма
+CU|Куба|Гавана
+VE|Венесуела|Каракас
+EG|Єгипет|Каїр
+ZA|ПАР|Преторія
+NG|Нігерія|Абуджа
+KE|Кенія|Найробі
+MA|Марокко|Рабат
+ET|Ефіопія|Аддис-Абеба
+DZ|Алжир|Алжир
+AU|Австралія|Канберра
+NZ|Нова Зеландія|Веллінгтон`;
+const ALL=RAW.split("\n").map(l=>{const [c,n,k]=l.split("|");return{f:String.fromCodePoint(...[...c].map(x=>127397+x.charCodeAt(0))),n,k}});
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let mode=0,queue=[],total=0,known=0,flipped=false,opts=null,picked=null;
+const app=document.getElementById("app");
+function start(){queue=sh(ALL);total=queue.length;known=0;flipped=false;opts=null;picked=null;render()}
+function setMode(m){mode=m;document.getElementById("m0").className=m===0?"on":"";document.getElementById("m1").className=m===1?"on":"";start()}
+document.getElementById("m0").onclick=()=>setMode(0);
+document.getElementById("m1").onclick=()=>setMode(1);
+const ans=c=>mode===0?c.n:c.k;
+function next(ok){const c=queue.shift();if(ok)known++;else queue.push(c);flipped=false;opts=null;picked=null;render()}
+function hint(){const c=queue[0];const w=sh(ALL.filter(x=>ans(x)!==ans(c))).slice(0,3);opts=sh([c,...w]).map(ans);render()}
+function pick(o){if(picked!==null)return;picked=o;render();if(o===ans(queue[0])){setTimeout(()=>{flipped=true;render()},600)}}
+function render(){
+  if(!queue.length){app.innerHTML=`<div class="end"><div class="flag">🎉</div><h2>Вітаю! Усе вивчено</h2><p class="sm">Ти знаєш ${total} карток.</p><button id="again">Почати знову</button></div>`;document.getElementById("again").onclick=start;return}
+  const c=queue[0];
+  const front=mode===0?`<div class="flag">${c.f}</div><div class="sm">Що це за країна?</div>`:`<div class="big">${c.n}</div><div class="flag" style="font-size:3rem">${c.f}</div><div class="sm">Яка столиця?</div>`;
+  const back=mode===0?`<div class="big">${c.n}</div><div class="sm">Столиця: ${c.k}</div>`:`<div class="big">${c.k}</div><div class="sm">${c.n} ${c.f}</div>`;
+  let h=`<div class="stat"><span>Вивчено: ${known} / ${total}</span><span>Залишилось: ${queue.length}</span></div>
+  <div class="bar"><i style="width:${known/total*100}%"></i></div>
+  <div class="scene" id="sc"><div class="card ${flipped?"flip":""}"><div class="face">${front}<span class="tap">натисни, щоб перевернути</span></div><div class="face back">${back}</div></div></div>`;
+  if(!flipped){
+    if(opts){h+=`<div class="opts">${opts.map((o,i)=>{let cl="";if(picked!==null){if(o===ans(c))cl="ok";else if(o===picked)cl="bad"}return`<button class="${cl}" data-i="${i}">${o}</button>`}).join("")}</div>`}
+    else h+=`<button class="hint" id="hint">💡 Підказка (4 варіанти)</button>`;
+  }
+  h+=`<div class="row"><button class="no" id="no">Не знаю</button><button class="yes" id="yes">Знаю</button></div>`;
+  app.innerHTML=h;
+  document.getElementById("sc").onclick=()=>{flipped=!flipped;render()};
+  document.getElementById("yes").onclick=()=>next(true);
+  document.getElementById("no").onclick=()=>next(false);
+  const hb=document.getElementById("hint");if(hb)hb.onclick=hint;
+  app.querySelectorAll(".opts button").forEach(b=>b.onclick=()=>pick(opts[+b.dataset.i]));
+}
+start();
+</script>
+</body>
+</html>
